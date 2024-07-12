@@ -1,0 +1,35 @@
+<svg
+  [style.width]="size()"
+  [style.height]="size()"
+  [attr.viewBox]="viewBox"
+  xmlns="http://www.w3.org/2000/svg"
+  style="transform: rotate(-90deg)"
+>
+  <circle
+    fill="transparent"
+    stroke-dashoffset="0"
+    stroke="whitesmoke"
+    [attr.r]="radius"
+    [attr.cx]="cx"
+    [attr.cy]="cy"
+    [attr.stroke-width]="strokeWidth()"
+    [attr.stroke-dasharray]="dashArray"
+  ></circle>
+
+  <circle
+    #progressCircle
+    stroke="royalblue"
+    fill="transparent"
+    stroke-linecap="round"
+    [attr.r]="radius"
+    [attr.cx]="cx"
+    [attr.cy]="cy"
+    [attr.stroke-width]="strokeWidth()"
+    [attr.stroke-dashoffset]="dashOffset()"
+    [attr.stroke-dasharray]="dashArray"
+  ></circle>
+</svg>
+
+<p class="h-full w-full flex items-center justify-center absolute inset-0">
+  {{ currentProgress() }}%
+</p>
