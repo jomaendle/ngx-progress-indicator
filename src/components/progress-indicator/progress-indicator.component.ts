@@ -25,12 +25,12 @@ const INITIAL_PROGRESS = 50;
 })
 export class ProgressIndicatorComponent {
   #previousProgress = signal(0);
-  currentProgress = signal(INITIAL_PROGRESS);
+  #currentProgress = signal(INITIAL_PROGRESS);
 
   @Input() set progress(value: number) {
     const clampedValue = getClampedValue(value);
-    this.#previousProgress.set(this.currentProgress());
-    this.currentProgress.set(clampedValue);
+    this.#previousProgress.set(this.#currentProgress());
+    this.#currentProgress.set(clampedValue);
   }
 
   size = input<number>(80);
@@ -44,18 +44,19 @@ export class ProgressIndicatorComponent {
   protected readonly cx = 100;
   protected readonly cy = 100;
   protected readonly dashArray = getCircumference(this.radius);
+  protected readonly currentProgress = this.#currentProgress.asReadonly();
 
   progressCircle = viewChild<ElementRef<SVGCircleElement>>('progressCircle');
 
   protected dashOffset = computed(() =>
-    getDashOffset(this.radius, this.currentProgress()),
+    getDashOffset(this.radius, this.#currentProgress()),
   );
 
   constructor() {
     effect(() => {
       const circle = this.progressCircle()?.nativeElement;
       const previous = this.#previousProgress();
-      const current = this.currentProgress();
+      const current = this.#currentProgress();
 
       if (circle && previous !== current) {
         this.#animateProgress(circle, previous);
@@ -68,7 +69,6 @@ export class ProgressIndicatorComponent {
       ? getDashOffset(this.radius, prev)
       : this.dashArray;
 
-    const circle = elem;
     const keyframes = [
       { strokeDashoffset: initialOffset },
       { strokeDashoffset: this.dashOffset() },
@@ -79,6 +79,6 @@ export class ProgressIndicatorComponent {
       fill: 'forwards',
     };
 
-    requestAnimationFrame(() => circle.animate(keyframes, options));
+    requestAnimationFrame(() => elem.animate(keyframes, options));
   }
 }
